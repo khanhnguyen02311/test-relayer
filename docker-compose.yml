@@ -1,0 +1,22 @@
+# "docker compose config"         to check the compose configs
+# "docker compose up"             to run the compose file
+# "docker compose stop"           to stop the containers
+# "docker compose down --volumes" to remove the containers & networks & data volumes
+
+# "psql -h localhost -d chatdb -U testuser1" inside postgres container
+
+version: '2.19'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-testrelay
+    restart: no
+    expose:
+      - '5432'
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_DB=relaydb'
+      - 'POSTGRES_USER=testuser1'
+      - 'POSTGRES_PASSWORD=testuser1pwd'
