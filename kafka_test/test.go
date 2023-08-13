@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -28,11 +27,11 @@ func produce(ctx context.Context) {
 		// each kafka message has a key and value. The key is used
 		// to decide which partition (and consequently, which broker)
 		// the message gets published on
-		start := time.Now()
+		// start := time.Now()
 		err := w.WriteMessages(ctx, kafka.Message{
 			Key: []byte(strconv.Itoa(i)),
 			// create an arbitrary message payload for the value
-			Value: []byte("this is message" + strconv.Itoa(i)),
+			Value: []byte("this is message " + strconv.Itoa(i)),
 		})
 		if err != nil {
 			panic("could not write message " + err.Error())
@@ -43,7 +42,7 @@ func produce(ctx context.Context) {
 		i++
 
 		// 100 messages per second
-		time.Sleep(time.Second/100 - time.Since(start))
+		// time.Sleep(time.Second/100 - time.Since(start))
 	}
 }
 
@@ -52,9 +51,11 @@ func consume(ctx context.Context) {
 	// the groupID identifies the consumer and prevents
 	// it from receiving duplicate messages
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{broker1Address, broker2Address},
-		Topic:   topic,
-		GroupID: "my-group",
+		Brokers:  []string{broker1Address, broker2Address},
+		Topic:    topic,
+		GroupID:  "my-group",
+		MinBytes: 5,
+		MaxBytes: 1e6,
 	})
 	for {
 		// the `ReadMessage` method blocks until we receive the next event
